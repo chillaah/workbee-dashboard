@@ -850,7 +850,7 @@ export default function Home() {
           </div>
           <div>
             <strong>WorkBee</strong>
-            <span>Command Centre</span>
+            <span>Dashboard</span>
           </div>
           <button
             className="icon-button sidebar__close"
@@ -1435,7 +1435,7 @@ export default function Home() {
           </section>
 
           <footer>
-            <span>WorkBee Command Centre</span>
+            <span>WorkBee Dashboard</span>
             <span>Operational data is read-only.</span>
           </footer>
         </div>

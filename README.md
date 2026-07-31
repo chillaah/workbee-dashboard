@@ -1,4 +1,4 @@
-# WorkBee Command Centre
+# WorkBee Dashboard
 
 A static Next.js operations dashboard for the WorkBee platform, designed for
 secure operational visibility and static deployment through GitHub Pages.
