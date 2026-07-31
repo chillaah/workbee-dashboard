@@ -681,7 +681,7 @@ export default function Home() {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [role, setRole] = useState("all");
-  const [range, setRange] = useState<TimeRange>("30d");
+  const [range, setRange] = useState<TimeRange>("7d");
   const [selectedUser, setSelectedUser] = useState<UserDetail | null>(null);
   const [profileOpen, setProfileOpen] = useState(false);
   const [profileLoading, setProfileLoading] = useState(false);
