@@ -4,15 +4,22 @@ import {
   Activity,
   ArrowDownToLine,
   BriefcaseBusiness,
+  CalendarDays,
   Check,
   ChevronDown,
+  CircleAlert,
   CircleUserRound,
   Database,
+  ExternalLink,
   FileCheck2,
+  FileText,
   Gauge,
   Globe2,
+  IdCard,
   LayoutDashboard,
+  LoaderCircle,
   Menu,
+  Phone,
   RefreshCw,
   Search,
   Settings2,
@@ -41,6 +48,8 @@ import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import {
   DashboardData,
   RecentUser,
+  UserDetail,
+  UserDocument,
   demoDashboardData,
 } from "@/lib/dashboard-data";
 
@@ -109,6 +118,38 @@ function initials(name: string) {
 
 function titleCase(value: string) {
   return value.charAt(0).toUpperCase() + value.slice(1);
+}
+
+function humanizeKey(value: string) {
+  return value
+    .replace(/([a-z])([A-Z])/g, "$1 $2")
+    .replace(/[-_]/g, " ")
+    .replace(/^./, (letter) => letter.toUpperCase());
+}
+
+function languageLabel(value: string) {
+  return (
+    {
+      en: "English",
+      si: "Sinhala",
+      ta: "Tamil",
+    }[value] ?? value
+  );
+}
+
+function formatDate(value: string | null) {
+  if (!value) return "Not recorded";
+  return new Date(value).toLocaleDateString("en-LK", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
+}
+
+function formatBytes(bytes: number) {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
 function MetricCard({
@@ -254,6 +295,212 @@ function ConnectionDialog({
   );
 }
 
+function ProfileDrawer({
+  user,
+  loading,
+  error,
+  documentLoading,
+  onClose,
+  onOpenDocument,
+}: {
+  user: UserDetail | null;
+  loading: boolean;
+  error: string;
+  documentLoading: string;
+  onClose: () => void;
+  onOpenDocument: (document: UserDocument) => void;
+}) {
+  return (
+    <div className="profile-backdrop" role="presentation" onMouseDown={onClose}>
+      <aside
+        aria-label="User profile details"
+        aria-modal="true"
+        className="profile-drawer"
+        role="dialog"
+        onMouseDown={(event) => event.stopPropagation()}
+      >
+        <div className="profile-drawer__top">
+          <span>User record</span>
+          <button className="icon-button" onClick={onClose} aria-label="Close profile">
+            <X size={18} />
+          </button>
+        </div>
+
+        {loading ? (
+          <div className="profile-state">
+            <LoaderCircle className="spin" size={28} />
+            <strong>Loading profile</strong>
+            <span>Retrieving details and files from Workbee.</span>
+          </div>
+        ) : error ? (
+          <div className="profile-state profile-state--error">
+            <CircleAlert size={28} />
+            <strong>Could not open this profile</strong>
+            <span>{error}</span>
+          </div>
+        ) : user ? (
+          <div className="profile-drawer__body">
+            <section className="profile-identity">
+              <div className="profile-avatar">{initials(user.name)}</div>
+              <div>
+                <span className={`role-badge role-badge--${user.role}`}>
+                  {titleCase(user.role)}
+                </span>
+                <h2>{user.name}</h2>
+                <p><IdCard size={13} />{user.id}</p>
+              </div>
+            </section>
+
+            <section className="profile-summary">
+              <div>
+                <Phone size={16} />
+                <span>Phone</span>
+                <strong>{user.phoneNumber}</strong>
+              </div>
+              <div>
+                <Globe2 size={16} />
+                <span>Language</span>
+                <strong>{languageLabel(user.language)}</strong>
+              </div>
+              <div>
+                <CalendarDays size={16} />
+                <span>Joined</span>
+                <strong>{formatDate(user.createdAt)}</strong>
+              </div>
+              <div>
+                <WalletCards size={16} />
+                <span>Vault</span>
+                <strong>{currency.format(user.vaultBalance)}</strong>
+              </div>
+            </section>
+
+            {user.employeeProfile ? (
+              <section className="profile-section">
+                <div className="profile-section__heading">
+                  <CircleUserRound size={17} />
+                  <div>
+                    <h3>Employee details</h3>
+                    <p>Personal and location information</p>
+                  </div>
+                </div>
+                <dl className="detail-grid">
+                  <div><dt>Full name</dt><dd>{[user.employeeProfile.firstName, user.employeeProfile.surname].filter(Boolean).join(" ")}</dd></div>
+                  <div><dt>Date of birth</dt><dd>{formatDate(user.employeeProfile.dateOfBirth)}</dd></div>
+                  <div><dt>Gender</dt><dd>{humanizeKey(user.employeeProfile.gender || "Not provided")}</dd></div>
+                  <div><dt>Contact number</dt><dd>{user.employeeProfile.contactNumber}</dd></div>
+                  <div><dt>Province</dt><dd>{user.employeeProfile.province || "Not provided"}</dd></div>
+                  <div><dt>City / town</dt><dd>{[user.employeeProfile.city, user.employeeProfile.town].filter(Boolean).join(", ")}</dd></div>
+                  <div className="detail-grid__wide"><dt>Division</dt><dd>{user.employeeProfile.division}</dd></div>
+                  <div className="detail-grid__wide"><dt>Permanent address</dt><dd>{user.employeeProfile.permanentAddress}</dd></div>
+                  <div className="detail-grid__wide"><dt>Current address</dt><dd>{user.employeeProfile.currentAddress || "Same as permanent address"}</dd></div>
+                </dl>
+              </section>
+            ) : null}
+
+            {user.employerProfile ? (
+              <section className="profile-section">
+                <div className="profile-section__heading">
+                  <BriefcaseBusiness size={17} />
+                  <div>
+                    <h3>Employer details</h3>
+                    <p>Business and contact information</p>
+                  </div>
+                </div>
+                <dl className="detail-grid">
+                  <div><dt>Business</dt><dd>{user.employerProfile.businessName}</dd></div>
+                  <div><dt>Contact person</dt><dd>{user.employerProfile.contactName}</dd></div>
+                  <div><dt>Contact number</dt><dd>{user.employerProfile.contactNumber}</dd></div>
+                  <div className="detail-grid__wide"><dt>Business address</dt><dd>{user.employerProfile.businessAddress}</dd></div>
+                </dl>
+              </section>
+            ) : null}
+
+            <section className="profile-section">
+              <div className="profile-section__heading">
+                <BriefcaseBusiness size={17} />
+                <div>
+                  <h3>Job preferences</h3>
+                  <p>Categories and roles this person selected</p>
+                </div>
+              </div>
+              {user.jobPreferences.length ? (
+                <div className="preference-groups">
+                  {user.jobPreferences.map((preference) => (
+                    <div key={preference.key}>
+                      <strong>{humanizeKey(preference.key)}</strong>
+                      <div>
+                        {preference.subcategories.map((subcategory) => (
+                          <span key={subcategory}>{humanizeKey(subcategory)}</span>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="profile-empty">No job preferences recorded.</p>
+              )}
+            </section>
+
+            <section className="profile-section profile-section--files">
+              <div className="profile-section__heading">
+                <FileCheck2 size={17} />
+                <div>
+                  <h3>Files</h3>
+                  <p>{user.documents.length} uploaded document{user.documents.length === 1 ? "" : "s"}</p>
+                </div>
+              </div>
+              {user.documents.length ? (
+                <div className="file-list">
+                  {user.documents.map((document) => (
+                    <button
+                      key={document.id}
+                      onClick={() => onOpenDocument(document)}
+                      disabled={documentLoading === document.id}
+                    >
+                      <span className="file-list__icon"><FileText size={18} /></span>
+                      <span>
+                        <strong>{humanizeKey(document.type)}</strong>
+                        <small>{document.name} · {formatBytes(document.sizeBytes)}</small>
+                      </span>
+                      {documentLoading === document.id ? (
+                        <LoaderCircle className="spin" size={16} />
+                      ) : (
+                        <ExternalLink size={16} />
+                      )}
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <p className="profile-empty">No files uploaded for this person.</p>
+              )}
+            </section>
+
+            {user.employeeProfile ? (
+              <section className="profile-section emergency-card">
+                <div className="profile-section__heading">
+                  <Phone size={17} />
+                  <div>
+                    <h3>Emergency contact</h3>
+                    <p>Use only when necessary</p>
+                  </div>
+                </div>
+                <strong>{user.employeeProfile.emergencyName}</strong>
+                <span>{user.employeeProfile.emergencyPhone}</span>
+                <p>{user.employeeProfile.emergencyAddress}</p>
+              </section>
+            ) : null}
+
+            <div className="profile-audit">
+              <span>Last login: {formatDate(user.lastLoginAt)}</span>
+              <span>Rating: ★ {user.rating.toFixed(1)}</span>
+            </div>
+          </div>
+        ) : null}
+      </aside>
+    </div>
+  );
+}
+
 export default function Home() {
   const [data, setData] = useState<DashboardData>(demoDashboardData);
   const [mode, setMode] = useState<DataMode>("demo");
@@ -267,6 +514,11 @@ export default function Home() {
   const [query, setQuery] = useState("");
   const [role, setRole] = useState("all");
   const [range, setRange] = useState<TimeRange>("30d");
+  const [selectedUser, setSelectedUser] = useState<UserDetail | null>(null);
+  const [profileOpen, setProfileOpen] = useState(false);
+  const [profileLoading, setProfileLoading] = useState(false);
+  const [profileError, setProfileError] = useState("");
+  const [documentLoading, setDocumentLoading] = useState("");
 
   const loadDashboard = useCallback(async (nextConnection: Connection) => {
     if (!nextConnection.apiUrl || !nextConnection.token) {
@@ -328,7 +580,21 @@ export default function Home() {
       const matchesRole = role === "all" || user.role === role;
       const matchesQuery =
         !needle ||
-        [user.name, user.phoneNumber, user.location, user.language, user.id]
+        [
+          user.name,
+          user.phoneNumber,
+          user.location,
+          user.language,
+          user.id,
+          ...user.jobPreferences.flatMap((preference) => [
+            preference.key,
+            humanizeKey(preference.key),
+            ...preference.subcategories.flatMap((subcategory) => [
+              subcategory,
+              humanizeKey(subcategory),
+            ]),
+          ]),
+        ]
           .join(" ")
           .toLowerCase()
           .includes(needle);
@@ -369,6 +635,102 @@ export default function Home() {
     setMobileNavOpen(false);
   };
 
+  const openProfile = async (user: RecentUser) => {
+    setProfileOpen(true);
+    setSelectedUser(null);
+    setProfileError("");
+    setProfileLoading(true);
+
+    if (mode !== "live") {
+      setSelectedUser({
+        id: user.id,
+        name: user.name,
+        phoneNumber: user.phoneNumber,
+        language: user.language,
+        role: user.role,
+        rating: user.rating,
+        vaultBalance: user.vaultBalance,
+        phoneVerifiedAt: null,
+        lastLoginAt: null,
+        createdAt: user.joinedAt,
+        updatedAt: user.joinedAt,
+        employeeProfile: null,
+        employerProfile: null,
+        jobPreferences: user.jobPreferences,
+        documents: [],
+      });
+      setProfileLoading(false);
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `${connection.apiUrl}/api/v1/admin/users/${user.id}`,
+        {
+          headers: {
+            authorization: `Bearer ${connection.token}`,
+            accept: "application/json",
+          },
+        },
+      );
+      const body = (await response.json().catch(() => ({}))) as {
+        user?: UserDetail;
+        error?: string;
+      };
+      if (!response.ok || !body.user) {
+        throw new Error(body.error || "The profile could not be loaded.");
+      }
+      setSelectedUser(body.user);
+    } catch (error) {
+      setProfileError(
+        error instanceof Error
+          ? error.message
+          : "The profile could not be loaded.",
+      );
+    } finally {
+      setProfileLoading(false);
+    }
+  };
+
+  const openDocument = async (document: UserDocument) => {
+    if (!selectedUser) return;
+    const preview = window.open("", "_blank");
+    setDocumentLoading(document.id);
+    setProfileError("");
+    try {
+      const response = await fetch(
+        `${connection.apiUrl}/api/v1/admin/users/${selectedUser.id}/documents/${document.id}`,
+        {
+          headers: {
+            authorization: `Bearer ${connection.token}`,
+          },
+        },
+      );
+      if (!response.ok) {
+        const body = (await response.json().catch(() => ({}))) as {
+          error?: string;
+        };
+        throw new Error(body.error || "The document could not be opened.");
+      }
+      const objectUrl = URL.createObjectURL(await response.blob());
+      if (preview) {
+        preview.location.href = objectUrl;
+      } else {
+        window.location.href = objectUrl;
+      }
+      window.setTimeout(() => URL.revokeObjectURL(objectUrl), 60_000);
+    } catch (error) {
+      preview?.close();
+      setProfileError(
+        error instanceof Error
+          ? error.message
+          : "The document could not be opened.",
+      );
+    } finally {
+      setDocumentLoading("");
+    }
+  };
+
   const exportUsers = () => {
     const header = [
       "Name",
@@ -376,6 +738,7 @@ export default function Home() {
       "Role",
       "Location",
       "Language",
+      "Job preferences",
       "Profile complete",
       "Documents",
       "Rating",
@@ -388,6 +751,12 @@ export default function Home() {
       user.role,
       user.location,
       user.language,
+      user.jobPreferences
+        .flatMap((preference) => [
+          humanizeKey(preference.key),
+          ...preference.subcategories.map(humanizeKey),
+        ])
+        .join("; "),
       user.profileComplete ? "Yes" : "No",
       user.documents,
       user.rating,
@@ -633,12 +1002,12 @@ export default function Home() {
                   <AreaChart data={chartData} margin={{ top: 8, right: 8, left: -24, bottom: 0 }}>
                     <defs>
                       <linearGradient id="usersFill" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#075dee" stopOpacity={0.24} />
-                        <stop offset="100%" stopColor="#075dee" stopOpacity={0} />
+                        <stop offset="0%" stopColor="#0D5BFF" stopOpacity={0.24} />
+                        <stop offset="100%" stopColor="#0D5BFF" stopOpacity={0} />
                       </linearGradient>
                       <linearGradient id="profilesFill" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#7c5cf5" stopOpacity={0.18} />
-                        <stop offset="100%" stopColor="#7c5cf5" stopOpacity={0} />
+                        <stop offset="0%" stopColor="#FFD54A" stopOpacity={0.3} />
+                        <stop offset="100%" stopColor="#FFD54A" stopOpacity={0} />
                       </linearGradient>
                     </defs>
                     <CartesianGrid vertical={false} stroke="#edf0f5" />
@@ -680,7 +1049,7 @@ export default function Home() {
                       dataKey="users"
                       name="Registrations"
                       type="monotone"
-                      stroke="#075dee"
+                      stroke="#0D5BFF"
                       strokeWidth={2.5}
                       fill="url(#usersFill)"
                     />
@@ -688,7 +1057,7 @@ export default function Home() {
                       dataKey="profiles"
                       name="Profiles completed"
                       type="monotone"
-                      stroke="#7c5cf5"
+                      stroke="#E0AD00"
                       strokeWidth={2.2}
                       fill="url(#profilesFill)"
                     />
@@ -722,7 +1091,7 @@ export default function Home() {
                         {data.roles.map((entry, index) => (
                           <Cell
                             key={entry.name}
-                            fill={index === 0 ? "#075dee" : "#9fb9f3"}
+                            fill={index === 0 ? "#0D5BFF" : "#FFD54A"}
                           />
                         ))}
                       </Pie>
@@ -818,7 +1187,7 @@ export default function Home() {
                       cursor={{ fill: "#f6f8fc" }}
                       contentStyle={{ borderRadius: 10, border: "1px solid #e5e9f1" }}
                     />
-                    <Bar dataKey="value" name="People" fill="#075dee" radius={[0, 6, 6, 0]} barSize={18} />
+                    <Bar dataKey="value" name="People" fill="#0D5BFF" radius={[0, 6, 6, 0]} barSize={18} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
@@ -860,15 +1229,15 @@ export default function Home() {
             <div className="people-panel__header">
               <div>
                 <span className="panel__kicker">Directory</span>
-                <h2>Recently joined</h2>
-                <p>The newest accounts across the Workbee community.</p>
+                <h2>People directory</h2>
+                <p>Select a person to inspect their profile and files.</p>
               </div>
               <div className="people-tools">
                 <label className="search-box">
                   <Search size={16} />
                   <input
-                    aria-label="Search people"
-                    placeholder="Search people"
+                    aria-label="Search people by name, ID, or job preference"
+                    placeholder="Name, ID or job preference"
                     value={query}
                     onChange={(event) => setQuery(event.target.value)}
                   />
@@ -905,10 +1274,10 @@ export default function Home() {
                     <tr>
                       <th>Person</th>
                       <th>Role</th>
+                      <th>Job preferences</th>
                       <th>Location</th>
                       <th>Profile</th>
-                      <th>Documents</th>
-                      <th>Rating</th>
+                      <th>Files</th>
                       <th>Joined</th>
                     </tr>
                   </thead>
@@ -916,18 +1285,39 @@ export default function Home() {
                     {filteredUsers.map((user: RecentUser) => (
                       <tr key={user.id}>
                         <td>
-                          <div className="person-cell">
+                          <button
+                            className="person-cell person-cell--button"
+                            onClick={() => void openProfile(user)}
+                            aria-label={`Open ${user.name}'s profile`}
+                          >
                             <span className="avatar">{initials(user.name)}</span>
                             <div>
                               <strong>{user.name}</strong>
-                              <span>{user.phoneNumber}</span>
+                              <span>{user.id}</span>
                             </div>
-                          </div>
+                            <ExternalLink size={14} />
+                          </button>
                         </td>
                         <td>
                           <span className={`role-badge role-badge--${user.role}`}>
                             {titleCase(user.role)}
                           </span>
+                        </td>
+                        <td>
+                          {user.jobPreferences.length ? (
+                            <div className="table-preferences">
+                              {user.jobPreferences.slice(0, 2).map((preference) => (
+                                <span key={preference.key}>
+                                  {humanizeKey(preference.key)}
+                                </span>
+                              ))}
+                              {user.jobPreferences.length > 2 ? (
+                                <small>+{user.jobPreferences.length - 2}</small>
+                              ) : null}
+                            </div>
+                          ) : (
+                            <span className="table-secondary">Not selected</span>
+                          )}
                         </td>
                         <td>
                           <strong className="table-primary">{user.location}</strong>
@@ -946,9 +1336,6 @@ export default function Home() {
                           </span>
                         </td>
                         <td>
-                          <strong className="rating">★ {user.rating.toFixed(1)}</strong>
-                        </td>
-                        <td>
                           <span className="table-secondary">
                             {formatRelativeTime(user.joinedAt, data.generatedAt)}
                           </span>
@@ -963,7 +1350,7 @@ export default function Home() {
             )}
             <div className="table-footer">
               <span>
-                Showing {filteredUsers.length} of {data.recentUsers.length} recent people
+                Showing {filteredUsers.length} of {data.recentUsers.length} people
               </span>
               <span>
                 Snapshot{" "}
@@ -989,6 +1376,21 @@ export default function Home() {
           onClose={() => setConnectionOpen(false)}
           onSave={saveConnection}
           onDisconnect={disconnect}
+        />
+      ) : null}
+
+      {profileOpen ? (
+        <ProfileDrawer
+          user={selectedUser}
+          loading={profileLoading}
+          error={profileError}
+          documentLoading={documentLoading}
+          onClose={() => {
+            setProfileOpen(false);
+            setSelectedUser(null);
+            setProfileError("");
+          }}
+          onOpenDocument={(document) => void openDocument(document)}
         />
       ) : null}
     </div>

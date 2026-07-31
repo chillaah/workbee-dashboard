@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Workbee Command Centre",
     description: "People. Demand. Operations.",
-    images: [{ url: "og.png", width: 1792, height: 909 }],
+    images: [{ url: "og.png", width: 1731, height: 909 }],
     type: "website",
   },
   twitter: {

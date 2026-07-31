@@ -19,6 +19,11 @@ export type Breakdown = {
   value: number;
 };
 
+export type JobPreference = {
+  key: string;
+  subcategories: string[];
+};
+
 export type RecentUser = {
   id: string;
   name: string;
@@ -31,6 +36,62 @@ export type RecentUser = {
   documents: number;
   rating: number;
   vaultBalance: number;
+  jobPreferences: JobPreference[];
+};
+
+export type UserDocument = {
+  id: string;
+  type: string;
+  name: string;
+  mimeType: string;
+  sizeBytes: number;
+  createdAt: string;
+};
+
+export type EmployeeProfile = {
+  firstName: string;
+  surname: string;
+  dateOfBirth: string;
+  gender: string;
+  contactNumber: string;
+  province: string;
+  city: string;
+  town: string;
+  division: string;
+  permanentAddress: string;
+  currentAddress: string;
+  emergencyName: string;
+  emergencyAddress: string;
+  emergencyPhone: string;
+  completedAt: string;
+  updatedAt: string;
+};
+
+export type EmployerProfile = {
+  businessName: string;
+  contactName: string;
+  contactNumber: string;
+  businessAddress: string;
+  completedAt: string;
+  updatedAt: string;
+};
+
+export type UserDetail = {
+  id: string;
+  name: string;
+  phoneNumber: string;
+  language: string;
+  role: "employee" | "employer" | "unassigned";
+  rating: number;
+  vaultBalance: number;
+  phoneVerifiedAt: string | null;
+  lastLoginAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+  employeeProfile: EmployeeProfile | null;
+  employerProfile: EmployerProfile | null;
+  jobPreferences: JobPreference[];
+  documents: UserDocument[];
 };
 
 export type DashboardData = {
@@ -126,6 +187,9 @@ export const demoDashboardData: DashboardData = {
       documents: 5,
       rating: 4.9,
       vaultBalance: 3250,
+      jobPreferences: [
+        { key: "hospitalityFoodTourism", subcategories: ["hotelHospitality"] },
+      ],
     },
     {
       id: "e281bc83",
@@ -139,6 +203,7 @@ export const demoDashboardData: DashboardData = {
       documents: 0,
       rating: 5,
       vaultBalance: 12800,
+      jobPreferences: [],
     },
     {
       id: "db91ad72",
@@ -152,6 +217,9 @@ export const demoDashboardData: DashboardData = {
       documents: 3,
       rating: 4.7,
       vaultBalance: 1800,
+      jobPreferences: [
+        { key: "itDigital", subcategories: ["technicalSupport"] },
+      ],
     },
     {
       id: "c394e10a",
@@ -165,6 +233,9 @@ export const demoDashboardData: DashboardData = {
       documents: 1,
       rating: 5,
       vaultBalance: 0,
+      jobPreferences: [
+        { key: "construction", subcategories: ["masonry", "tiling"] },
+      ],
     },
     {
       id: "f551bd18",
@@ -178,6 +249,7 @@ export const demoDashboardData: DashboardData = {
       documents: 0,
       rating: 4.8,
       vaultBalance: 24600,
+      jobPreferences: [],
     },
     {
       id: "b104fa38",
@@ -191,6 +263,9 @@ export const demoDashboardData: DashboardData = {
       documents: 4,
       rating: 4.6,
       vaultBalance: 950,
+      jobPreferences: [
+        { key: "logisticsDelivery", subcategories: ["warehouseWork"] },
+      ],
     },
   ],
 };
