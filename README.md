@@ -1,0 +1,44 @@
+# Workbee Command Centre
+
+A static Next.js operations dashboard for the Workbee platform, designed for
+GitHub Pages and inspired by the Quantroam dashboard architecture.
+
+## What it shows
+
+- total users, employees, employers, profile completion, document coverage, and
+  vault balances
+- account growth and profile-completion trends
+- role and language distribution
+- top worker job preferences and geographic coverage
+- a searchable, filterable, CSV-exportable recent-user directory
+
+The published dashboard never connects directly to PostgreSQL. It reads from a
+protected Workbee API endpoint so database credentials remain server-side.
+
+## Local development
+
+```bash
+npm install
+npm run dev
+```
+
+Open `http://localhost:3000`. The dashboard starts with representative demo
+data. Select **Connect live data** and enter:
+
+- the public HTTPS URL of the Workbee backend
+- the value configured as `DASHBOARD_ADMIN_TOKEN` on that backend
+
+The key is stored in `sessionStorage`, so it is cleared when the browser session
+ends and is not compiled into the GitHub Pages bundle.
+
+## Validation
+
+```bash
+npm test
+```
+
+## GitHub Pages
+
+The workflow in `.github/workflows/deploy-pages.yml` builds and publishes the
+static export whenever `main` is updated. In the repository settings, set
+**Pages → Build and deployment → Source** to **GitHub Actions**.
