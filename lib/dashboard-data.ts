@@ -11,6 +11,8 @@ export type DashboardSummary = {
 export type TrendPoint = {
   date: string;
   users: number;
+  employees: number;
+  employers: number;
   profiles: number;
 };
 
@@ -69,10 +71,12 @@ export type EmployeeProfile = {
 };
 
 export type EmployerProfile = {
-  businessName: string;
-  contactName: string;
+  firstName: string;
+  surname: string;
+  businessName: string | null;
+  contactName: string | null;
   contactNumber: string;
-  businessAddress: string;
+  businessAddress: string | null;
   completedAt: string;
   updatedAt: string;
 };

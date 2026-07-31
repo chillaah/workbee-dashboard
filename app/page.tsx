@@ -126,6 +126,12 @@ function titleCase(value: string) {
   return value.charAt(0).toUpperCase() + value.slice(1);
 }
 
+function roleColor(name: string) {
+  if (name === "Employees") return "#0D5BFF";
+  if (name === "Employers") return "#FFD54A";
+  return "#A7AFBF";
+}
+
 const displayAcronyms: Record<string, string> = {
   ai: "AI",
   api: "API",
@@ -515,14 +521,19 @@ function ProfileDrawer({
                   <BriefcaseBusiness size={17} />
                   <div>
                     <h3>Employer Details</h3>
-                    <p>Business and Contact Information</p>
+                    <p>Personal and Contact Information</p>
                   </div>
                 </div>
                 <dl className="detail-grid">
-                  <div><dt>Business</dt><dd>{user.employerProfile.businessName}</dd></div>
-                  <div><dt>Contact Person</dt><dd>{user.employerProfile.contactName}</dd></div>
+                  <div><dt>First Name</dt><dd>{user.employerProfile.firstName || "Not provided"}</dd></div>
+                  <div><dt>Surname</dt><dd>{user.employerProfile.surname || "Not provided"}</dd></div>
                   <div><dt>Contact Number</dt><dd>{user.employerProfile.contactNumber}</dd></div>
-                  <div className="detail-grid__wide"><dt>Business Address</dt><dd>{user.employerProfile.businessAddress}</dd></div>
+                  {user.employerProfile.businessName ? (
+                    <div><dt>Business</dt><dd>{user.employerProfile.businessName}</dd></div>
+                  ) : null}
+                  {user.employerProfile.businessAddress ? (
+                    <div className="detail-grid__wide"><dt>Business Address</dt><dd>{user.employerProfile.businessAddress}</dd></div>
+                  ) : null}
                 </dl>
               </section>
             ) : null}
@@ -681,7 +692,7 @@ export default function Home() {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [role, setRole] = useState("all");
-  const [range, setRange] = useState<TimeRange>("30d");
+  const [range, setRange] = useState<TimeRange>("7d");
   const [selectedUser, setSelectedUser] = useState<UserDetail | null>(null);
   const [profileOpen, setProfileOpen] = useState(false);
   const [profileLoading, setProfileLoading] = useState(false);
@@ -1272,7 +1283,8 @@ export default function Home() {
                 </div>
               </div>
               <div className="chart-legend">
-                <span><i className="legend-dot legend-dot--blue" />Registrations</span>
+                <span><i className="legend-dot legend-dot--blue" />Employees</span>
+                <span><i className="legend-dot legend-dot--amber" />Employers</span>
                 <span><i className="legend-dot legend-dot--violet" />Profiles Completed</span>
               </div>
               <div className="trend-chart">
@@ -1284,6 +1296,10 @@ export default function Home() {
                         <stop offset="100%" stopColor="#0D5BFF" stopOpacity={0} />
                       </linearGradient>
                       <linearGradient id="profilesFill" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#7C5CFC" stopOpacity={0.24} />
+                        <stop offset="100%" stopColor="#7C5CFC" stopOpacity={0} />
+                      </linearGradient>
+                      <linearGradient id="employersFill" x1="0" y1="0" x2="0" y2="1">
                         <stop offset="0%" stopColor="#FFD54A" stopOpacity={0.3} />
                         <stop offset="100%" stopColor="#FFD54A" stopOpacity={0} />
                       </linearGradient>
@@ -1324,18 +1340,26 @@ export default function Home() {
                       }
                     />
                     <Area
-                      dataKey="users"
-                      name="Registrations"
+                      dataKey="employees"
+                      name="Employees"
                       type="monotone"
                       stroke="#0D5BFF"
                       strokeWidth={2.5}
                       fill="url(#usersFill)"
                     />
                     <Area
+                      dataKey="employers"
+                      name="Employers"
+                      type="monotone"
+                      stroke="#D9A900"
+                      strokeWidth={2.4}
+                      fill="url(#employersFill)"
+                    />
+                    <Area
                       dataKey="profiles"
                       name="Profiles Completed"
                       type="monotone"
-                      stroke="#E0AD00"
+                      stroke="#7C5CFC"
                       strokeWidth={2.2}
                       fill="url(#profilesFill)"
                     />
@@ -1366,10 +1390,10 @@ export default function Home() {
                         paddingAngle={3}
                         stroke="none"
                       >
-                        {data.roles.map((entry, index) => (
+                        {data.roles.map((entry) => (
                           <Cell
                             key={entry.name}
-                            fill={index === 0 ? "#0D5BFF" : "#FFD54A"}
+                            fill={roleColor(entry.name)}
                           />
                         ))}
                       </Pie>
@@ -1382,10 +1406,13 @@ export default function Home() {
                   </div>
                 </div>
                 <div className="donut-legend">
-                  {data.roles.map((item, index) => (
+                  {data.roles.map((item) => (
                     <div key={item.name}>
                       <span>
-                        <i className={index === 0 ? "role-dot role-dot--primary" : "role-dot"} />
+                        <i
+                          className="role-dot"
+                          style={{ background: roleColor(item.name) }}
+                        />
                         {item.name}
                       </span>
                       <strong>{fullNumber.format(item.value)}</strong>

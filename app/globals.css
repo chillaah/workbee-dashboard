@@ -9,7 +9,7 @@
   --panel: #ffffff;
   --green: #1a9b55;
   --amber: #ffd54a;
-  --violet: #e0ad00;
+  --violet: #7c5cfc;
   --sidebar-width: 244px;
   color-scheme: light;
 }
@@ -588,7 +588,7 @@ main {
   border: 1px solid #d7efe0;
   border-radius: 99px;
   color: #18844a;
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 750;
   padding: 4px 7px;
 }
@@ -610,7 +610,7 @@ main {
 .metric-card > span:last-child {
   color: #9298a7;
   display: block;
-  font-size: 9.5px;
+  font-size: 11.5px;
   margin-top: 9px;
 }
 
@@ -645,7 +645,7 @@ main {
 .panel__kicker {
   color: #9aa1b2;
   display: block;
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 750;
   letter-spacing: 0.8px;
   margin-bottom: 5px;
@@ -676,7 +676,7 @@ main {
   border: 0;
   border-radius: 6px;
   color: #7d8597;
-  font-size: 9.5px;
+  font-size: 11.5px;
   font-weight: 700;
   height: 27px;
   padding: 0 9px;
@@ -699,7 +699,7 @@ main {
   align-items: center;
   color: #7d8598;
   display: flex;
-  font-size: 9px;
+  font-size: 11px;
   gap: 5px;
 }
 
@@ -715,6 +715,10 @@ main {
 .legend-dot--blue,
 .role-dot--primary {
   background: var(--blue);
+}
+
+.legend-dot--amber {
+  background: var(--amber);
 }
 
 .legend-dot--violet {
@@ -756,7 +760,7 @@ main {
 
 .donut-chart__label span {
   color: #949bad;
-  font-size: 9px;
+  font-size: 11px;
 }
 
 .donut-legend {
@@ -808,7 +812,7 @@ main {
 
 .language-row span {
   color: #969dad;
-  font-size: 9px;
+  font-size: 11px;
 }
 
 .language-row strong {
@@ -834,7 +838,7 @@ main {
   color: #6f788e;
   display: flex;
   flex: 0 0 auto;
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 750;
   height: 24px;
   justify-content: center;
@@ -1040,7 +1044,7 @@ table {
 th {
   background: #fafbfc;
   color: #969dad;
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 750;
   letter-spacing: 0.45px;
   padding: 10px 14px;
@@ -1110,7 +1114,7 @@ tbody tr:hover {
 .table-secondary {
   color: #9299a9;
   display: block;
-  font-size: 9px;
+  font-size: 11px;
   margin-top: 3px;
 }
 
@@ -1119,7 +1123,7 @@ tbody tr:hover {
   align-items: center;
   border-radius: 99px;
   display: inline-flex;
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 680;
   padding: 4px 7px;
 }
@@ -1187,7 +1191,7 @@ tbody tr:hover {
   background: var(--blue-soft);
   border-radius: 99px;
   color: #1a57bf;
-  font-size: 8px;
+  font-size: 10px;
   font-weight: 700;
   padding: 4px 7px;
 }
@@ -1207,7 +1211,7 @@ tbody tr:hover {
   border-top: 1px solid var(--line);
   color: #9299a9;
   display: flex;
-  font-size: 9px;
+  font-size: 11px;
   justify-content: space-between;
   padding: 11px 15px;
 }
@@ -1235,7 +1239,7 @@ tbody tr:hover {
 footer {
   color: #9ba1ae;
   display: flex;
-  font-size: 9px;
+  font-size: 11px;
   justify-content: space-between;
   padding: 22px 2px 0;
 }
@@ -1352,7 +1356,7 @@ footer {
   align-items: center;
   color: #9fb0ca;
   display: flex;
-  font-size: 9px;
+  font-size: 11px;
   gap: 5px;
   margin: 0;
   word-break: break-all;
@@ -1393,11 +1397,11 @@ footer {
 
 .profile-summary span {
   color: #929bad;
-  font-size: 8px;
+  font-size: 10px;
 }
 
 .profile-summary strong {
-  font-size: 9px;
+  font-size: 11px;
   overflow-wrap: anywhere;
 }
 
@@ -1427,7 +1431,7 @@ footer {
 
 .profile-section__heading p {
   color: #8c95a8;
-  font-size: 9px;
+  font-size: 11px;
   margin: 0;
 }
 
@@ -1481,7 +1485,7 @@ footer {
 .approval-card > small {
   color: #8c95a8;
   display: block;
-  font-size: 8.5px;
+  font-size: 10.5px;
   margin-top: 10px;
 }
 
@@ -1489,7 +1493,7 @@ footer {
   align-items: center;
   color: #b42318;
   display: flex;
-  font-size: 9px;
+  font-size: 11px;
   gap: 5px;
   margin: 10px 0 0;
 }
@@ -1511,7 +1515,7 @@ footer {
 
 .detail-grid dt {
   color: #9099ab;
-  font-size: 8px;
+  font-size: 10px;
   margin-bottom: 4px;
   text-transform: uppercase;
 }
@@ -1547,7 +1551,7 @@ footer {
   background: var(--blue-soft);
   border-radius: 99px;
   color: #1a57bf;
-  font-size: 8.5px;
+  font-size: 10.5px;
   font-weight: 650;
   padding: 5px 8px;
 }
@@ -1611,7 +1615,7 @@ footer {
 
 .file-list small {
   color: #919aab;
-  font-size: 8.5px;
+  font-size: 10.5px;
   margin-top: 3px;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1632,14 +1636,14 @@ footer {
 .emergency-card > p {
   color: #687389;
   display: block;
-  font-size: 9.5px;
+  font-size: 11.5px;
   margin: 4px 0 0;
 }
 
 .profile-audit {
   color: #929bad;
   display: flex;
-  font-size: 8.5px;
+  font-size: 10.5px;
   justify-content: space-between;
   padding: 16px 22px 0;
 }
@@ -1684,7 +1688,7 @@ footer {
 
 .dialog__header span {
   color: var(--blue);
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 750;
   letter-spacing: 0.6px;
   text-transform: uppercase;
