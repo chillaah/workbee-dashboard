@@ -120,11 +120,56 @@ function titleCase(value: string) {
   return value.charAt(0).toUpperCase() + value.slice(1);
 }
 
+const displayAcronyms: Record<string, string> = {
+  ai: "AI",
+  api: "API",
+  cctv: "CCTV",
+  cv: "CV",
+  gps: "GPS",
+  id: "ID",
+  it: "IT",
+  ngo: "NGO",
+  nic: "NIC",
+  pdf: "PDF",
+  qa: "QA",
+  ui: "UI",
+  url: "URL",
+  ux: "UX",
+};
+
+const lowercaseDisplayWords = new Set([
+  "and",
+  "at",
+  "for",
+  "in",
+  "of",
+  "on",
+  "or",
+  "to",
+]);
+
 function humanizeKey(value: string) {
-  return value
+  const words = value
     .replace(/([a-z])([A-Z])/g, "$1 $2")
     .replace(/[-_]/g, " ")
-    .replace(/^./, (letter) => letter.toUpperCase());
+    .trim()
+    .split(/\s+/);
+
+  return words
+    .map((word, index) => {
+      const normalized = word.toLowerCase();
+      if (displayAcronyms[normalized]) return displayAcronyms[normalized];
+      if (index > 0 && lowercaseDisplayWords.has(normalized)) return normalized;
+      return normalized.charAt(0).toUpperCase() + normalized.slice(1);
+    })
+    .join(" ");
+}
+
+function greetingForTime(value: Date) {
+  const hour = value.getHours();
+  if (hour < 12) return "Good morning";
+  if (hour < 17) return "Good afternoon";
+  return "Good evening";
 }
 
 function languageLabel(value: string) {
@@ -519,6 +564,7 @@ export default function Home() {
   const [profileLoading, setProfileLoading] = useState(false);
   const [profileError, setProfileError] = useState("");
   const [documentLoading, setDocumentLoading] = useState("");
+  const [currentTime, setCurrentTime] = useState<Date | null>(null);
 
   const loadDashboard = useCallback(async (nextConnection: Connection) => {
     if (!nextConnection.apiUrl || !nextConnection.token) {
@@ -555,6 +601,13 @@ export default function Home() {
         error instanceof Error ? error.message : "Could not reach the API.",
       );
     }
+  }, []);
+
+  useEffect(() => {
+    const updateCurrentTime = () => setCurrentTime(new Date());
+    updateCurrentTime();
+    const timer = window.setInterval(updateCurrentTime, 60_000);
+    return () => window.clearInterval(timer);
   }, []);
 
   useEffect(() => {
@@ -898,9 +951,19 @@ export default function Home() {
             <div>
               <span className="eyebrow">
                 <Sparkles size={14} />
-                Friday, 31 July
+                {currentTime
+                  ? currentTime.toLocaleDateString("en-LK", {
+                      weekday: "long",
+                      day: "numeric",
+                      month: "long",
+                    })
+                  : "Today"}
               </span>
-              <h1>Good afternoon, Chiran.</h1>
+              <h1>
+                {currentTime
+                  ? `${greetingForTime(currentTime)}, Chiran.`
+                  : "Welcome, Chiran."}
+              </h1>
               <p>Here&apos;s what is happening across Workbee today.</p>
             </div>
             <div className="welcome__actions">
@@ -1142,7 +1205,7 @@ export default function Home() {
                     <span className="rank-row__number">{index + 1}</span>
                     <div>
                       <div>
-                        <strong>{category.name}</strong>
+                        <strong>{humanizeKey(category.name)}</strong>
                         <span>{fullNumber.format(category.value)}</span>
                       </div>
                       <i>
