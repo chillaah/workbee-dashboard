@@ -406,15 +406,21 @@ function ProfileDrawer({
   loading,
   error,
   documentLoading,
+  approvalSaving,
+  approvalError,
   onClose,
   onOpenDocument,
+  onApprovalChange,
 }: {
   user: UserDetail | null;
   loading: boolean;
   error: string;
   documentLoading: string;
+  approvalSaving: boolean;
+  approvalError: string;
   onClose: () => void;
   onOpenDocument: (document: UserDocument) => void;
+  onApprovalChange: (approved: boolean) => void;
 }) {
   return (
     <div className="profile-backdrop" role="presentation" onMouseDown={onClose}>
@@ -596,6 +602,62 @@ function ProfileDrawer({
               </section>
             ) : null}
 
+            <section className="profile-section approval-card">
+              <div className="profile-section__heading">
+                <ShieldCheck size={17} />
+                <div>
+                  <h3>Account Approval</h3>
+                  <p>Review all details and files before approving access.</p>
+                </div>
+              </div>
+              <div
+                className="approval-card__controls"
+                role="group"
+                aria-label="Account approval"
+              >
+                <button
+                  className={
+                    user.approved
+                      ? "approval-option approval-option--selected"
+                      : "approval-option"
+                  }
+                  disabled={approvalSaving || user.approved}
+                  onClick={() => onApprovalChange(true)}
+                  type="button"
+                >
+                  {approvalSaving && !user.approved ? (
+                    <LoaderCircle className="spin" size={15} />
+                  ) : (
+                    <Check size={15} />
+                  )}
+                  Yes
+                </button>
+                <button
+                  className={
+                    !user.approved
+                      ? "approval-option approval-option--selected approval-option--no"
+                      : "approval-option"
+                  }
+                  disabled={approvalSaving || !user.approved}
+                  onClick={() => onApprovalChange(false)}
+                  type="button"
+                >
+                  No
+                </button>
+              </div>
+              {approvalError ? (
+                <p className="approval-card__error" role="alert">
+                  <CircleAlert size={14} />
+                  {approvalError}
+                </p>
+              ) : null}
+              <small>
+                {user.approved
+                  ? `Approved ${formatDate(user.approvedAt)}`
+                  : "Pending review"}
+              </small>
+            </section>
+
             <div className="profile-audit">
               <span>Last Login: {formatDate(user.lastLoginAt)}</span>
               <span>Rating: ★ {user.rating.toFixed(1)}</span>
@@ -625,6 +687,8 @@ export default function Home() {
   const [profileLoading, setProfileLoading] = useState(false);
   const [profileError, setProfileError] = useState("");
   const [documentLoading, setDocumentLoading] = useState("");
+  const [approvalSaving, setApprovalSaving] = useState(false);
+  const [approvalError, setApprovalError] = useState("");
   const [currentTime, setCurrentTime] = useState<Date | null>(null);
 
   const loadDashboard = useCallback(async (nextConnection: Connection) => {
@@ -786,6 +850,7 @@ export default function Home() {
     setProfileOpen(true);
     setSelectedUser(null);
     setProfileError("");
+    setApprovalError("");
     setProfileLoading(true);
 
     if (mode !== "live") {
@@ -797,6 +862,9 @@ export default function Home() {
         role: user.role,
         rating: user.rating,
         vaultBalance: user.vaultBalance,
+        approved: user.approved,
+        approvedAt: null,
+        termsAcceptedAt: null,
         phoneVerifiedAt: null,
         lastLoginAt: null,
         createdAt: user.joinedAt,
@@ -878,6 +946,64 @@ export default function Home() {
     }
   };
 
+  const updateApproval = async (approved: boolean) => {
+    if (!selectedUser || mode !== "live") return;
+    setApprovalSaving(true);
+    setApprovalError("");
+    try {
+      const response = await fetch(
+        `${connection.apiUrl}/api/v1/admin/users/${selectedUser.id}/approval`,
+        {
+          method: "PUT",
+          headers: {
+            authorization: `Bearer ${connection.token}`,
+            "content-type": "application/json",
+            accept: "application/json",
+          },
+          body: JSON.stringify({ approved }),
+        },
+      );
+      const body = (await response.json().catch(() => ({}))) as {
+        user?: {
+          approved: boolean;
+          approvedAt: string | null;
+          updatedAt: string;
+        };
+        error?: string;
+      };
+      if (!response.ok || !body.user) {
+        throw new Error(body.error || "The approval could not be updated.");
+      }
+      const updatedApproval = body.user;
+      setSelectedUser((current) =>
+        current
+          ? {
+              ...current,
+              approved: updatedApproval.approved,
+              approvedAt: updatedApproval.approvedAt,
+              updatedAt: updatedApproval.updatedAt,
+            }
+          : current,
+      );
+      setData((current) => ({
+        ...current,
+        recentUsers: current.recentUsers.map((user) =>
+          user.id === selectedUser.id
+            ? { ...user, approved: updatedApproval.approved }
+            : user,
+        ),
+      }));
+    } catch (error) {
+      setApprovalError(
+        error instanceof Error
+          ? error.message
+          : "The approval could not be updated.",
+      );
+    } finally {
+      setApprovalSaving(false);
+    }
+  };
+
   const exportUsers = () => {
     const header = [
       "Name",
@@ -887,6 +1013,7 @@ export default function Home() {
       "Language",
       "Job Preferences",
       "Profile Complete",
+      "Approval",
       "Documents",
       "Rating",
       "Vault Balance",
@@ -905,6 +1032,7 @@ export default function Home() {
         ])
         .join("; "),
       user.profileComplete ? "Yes" : "No",
+      user.approved ? "Yes" : "No",
       user.documents,
       user.rating,
       user.vaultBalance,
@@ -1426,6 +1554,7 @@ export default function Home() {
                       <th>Job Preferences</th>
                       <th>Location</th>
                       <th>Profile</th>
+                      <th>Approval</th>
                       <th>Files</th>
                       <th>Joined</th>
                     </tr>
@@ -1479,6 +1608,12 @@ export default function Home() {
                           </span>
                         </td>
                         <td>
+                          <span className={user.approved ? "status status--good" : "status status--pending"}>
+                            <i />
+                            {user.approved ? "Yes" : "No"}
+                          </span>
+                        </td>
+                        <td>
                           <span className="document-count">
                             <FileCheck2 size={15} />
                             {user.documents}
@@ -1514,7 +1649,7 @@ export default function Home() {
 
           <footer>
             <span>WorkBee Dashboard</span>
-            <span>Operational data is read-only.</span>
+            <span>Operational data with controlled account approvals.</span>
           </footer>
         </div>
       </main>
@@ -1535,12 +1670,16 @@ export default function Home() {
           loading={profileLoading}
           error={profileError}
           documentLoading={documentLoading}
+          approvalSaving={approvalSaving}
+          approvalError={approvalError}
           onClose={() => {
             setProfileOpen(false);
             setSelectedUser(null);
             setProfileError("");
+            setApprovalError("");
           }}
           onOpenDocument={(document) => void openDocument(document)}
+          onApprovalChange={(approved) => void updateApproval(approved)}
         />
       ) : null}
     </div>

@@ -33,6 +33,7 @@ export type RecentUser = {
   language: string;
   joinedAt: string;
   profileComplete: boolean;
+  approved: boolean;
   documents: number;
   rating: number;
   vaultBalance: number;
@@ -84,6 +85,9 @@ export type UserDetail = {
   role: "employee" | "employer" | "unassigned";
   rating: number;
   vaultBalance: number;
+  approved: boolean;
+  approvedAt: string | null;
+  termsAcceptedAt: string | null;
   phoneVerifiedAt: string | null;
   lastLoginAt: string | null;
   createdAt: string;

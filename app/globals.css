@@ -1431,6 +1431,69 @@ footer {
   margin: 0;
 }
 
+.approval-card {
+  border-left: 3px solid var(--blue);
+}
+
+.approval-card__controls {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 15px;
+}
+
+.approval-option {
+  align-items: center;
+  background: #f5f7fb;
+  border: 1px solid #dce2ec;
+  border-radius: 9px;
+  color: #5e687b;
+  display: flex;
+  font-size: 10px;
+  font-weight: 700;
+  gap: 6px;
+  justify-content: center;
+  padding: 9px 12px;
+}
+
+.approval-option:not(:disabled):hover {
+  border-color: #8eb4ff;
+  color: var(--blue);
+}
+
+.approval-option--selected {
+  background: #eaf7ef;
+  border-color: #a7dfbd;
+  color: #23814b;
+}
+
+.approval-option--selected.approval-option--no {
+  background: #fff4df;
+  border-color: #efd49c;
+  color: #a56812;
+}
+
+.approval-option:disabled {
+  cursor: default;
+  opacity: 1;
+}
+
+.approval-card > small {
+  color: #8c95a8;
+  display: block;
+  font-size: 8.5px;
+  margin-top: 10px;
+}
+
+.approval-card__error {
+  align-items: center;
+  color: #b42318;
+  display: flex;
+  font-size: 9px;
+  gap: 5px;
+  margin: 10px 0 0;
+}
+
 .detail-grid {
   display: grid;
   gap: 15px 20px;
