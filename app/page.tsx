@@ -165,6 +165,14 @@ function humanizeKey(value: string) {
     .join(" ");
 }
 
+function documentTypeLabel(value: string) {
+  const identityDocumentLabels: Record<string, string> = {
+    "nic-front": "NIC / Driver's License / Passport — Front",
+    "nic-back": "NIC / Driver's License / Passport — Back",
+  };
+  return identityDocumentLabels[value] ?? humanizeKey(value);
+}
+
 function greetingForTime(value: Date) {
   const hour = value.getHours();
   if (hour < 12) return "Good morning";
@@ -504,7 +512,7 @@ function ProfileDrawer({
                     >
                       <span className="file-list__icon"><FileText size={18} /></span>
                       <span>
-                        <strong>{humanizeKey(document.type)}</strong>
+                        <strong>{documentTypeLabel(document.type)}</strong>
                         <small>{document.name} · {formatBytes(document.sizeBytes)}</small>
                       </span>
                       {documentLoading === document.id ? (
