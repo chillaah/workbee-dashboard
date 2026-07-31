@@ -993,6 +993,7 @@ export default function Home() {
             : user,
         ),
       }));
+      await loadDashboard(connection);
     } catch (error) {
       setApprovalError(
         error instanceof Error
@@ -1215,7 +1216,7 @@ export default function Home() {
 
           <section className="metric-grid" aria-label="Platform summary">
             <MetricCard
-              label="Total People"
+              label="Approved People"
               value={fullNumber.format(summary.totalUsers)}
               hint={`${fullNumber.format(summary.employees)} Employees · ${fullNumber.format(summary.employers)} Employers`}
               change={`+${summary.newUsers30d} This Month`}
@@ -1253,7 +1254,7 @@ export default function Home() {
                 <div>
                   <span className="panel__kicker">Growth</span>
                   <h2>New Registrations</h2>
-                  <p>Accounts Created and Profiles Completed.</p>
+                  <p>Approved Accounts Created and Profiles Completed.</p>
                 </div>
                 <div className="range-switch" aria-label="Chart range">
                   <button
