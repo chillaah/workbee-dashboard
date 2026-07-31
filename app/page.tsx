@@ -50,7 +50,7 @@ import {
   RecentUser,
   UserDetail,
   UserDocument,
-  demoDashboardData,
+  emptyDashboardData,
 } from "@/lib/dashboard-data";
 
 type Connection = {
@@ -58,12 +58,18 @@ type Connection = {
   token: string;
 };
 
-type DataMode = "demo" | "live" | "loading" | "error";
+type SignInCredentials = {
+  apiUrl: string;
+  username: string;
+  password: string;
+};
+
+type DataMode = "locked" | "live" | "loading" | "error";
 type TimeRange = "7d" | "30d";
 
 const localConnection: Connection = {
   apiUrl: process.env.NEXT_PUBLIC_WORKBEE_API_URL ?? "",
-  token: process.env.NEXT_PUBLIC_WORKBEE_DASHBOARD_TOKEN ?? "",
+  token: "",
 };
 
 const navigation = [
@@ -248,26 +254,50 @@ function EmptyState() {
 function ConnectionDialog({
   connection,
   onClose,
-  onSave,
+  onSignIn,
   onDisconnect,
+  canClose = true,
 }: {
   connection: Connection;
   onClose: () => void;
-  onSave: (connection: Connection) => void;
+  onSignIn: (credentials: SignInCredentials) => Promise<void>;
   onDisconnect: () => void;
+  canClose?: boolean;
 }) {
-  const [draft, setDraft] = useState(connection);
+  const [apiUrl, setApiUrl] = useState(connection.apiUrl);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
 
-  const submit = (event: FormEvent) => {
+  const submit = async (event: FormEvent) => {
     event.preventDefault();
-    onSave({
-      apiUrl: draft.apiUrl.trim().replace(/\/+$/, ""),
-      token: draft.token.trim(),
-    });
+    setSubmitting(true);
+    setError("");
+    try {
+      await onSignIn({
+        apiUrl: apiUrl.trim().replace(/\/+$/, ""),
+        username,
+        password,
+      });
+      setPassword("");
+    } catch (signInError) {
+      setError(
+        signInError instanceof Error
+          ? signInError.message
+          : "Sign-in failed. Please try again.",
+      );
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
-    <div className="dialog-backdrop" role="presentation" onMouseDown={onClose}>
+    <div
+      className={`dialog-backdrop ${canClose ? "" : "dialog-backdrop--locked"}`}
+      role="presentation"
+      onMouseDown={canClose ? onClose : undefined}
+    >
       <section
         aria-labelledby="connection-title"
         aria-modal="true"
@@ -280,16 +310,18 @@ function ConnectionDialog({
             <Database size={22} />
           </div>
           <div>
-            <span>Live Data</span>
-            <h2 id="connection-title">Connect the WorkBee API</h2>
+            <span>Secure Access</span>
+            <h2 id="connection-title">Sign In to WorkBee Dashboard</h2>
           </div>
-          <button className="icon-button" onClick={onClose} aria-label="Close">
-            <X size={18} />
-          </button>
+          {canClose ? (
+            <button className="icon-button" onClick={onClose} aria-label="Close">
+              <X size={18} />
+            </button>
+          ) : null}
         </div>
         <p className="dialog__copy">
-          The API keeps PostgreSQL credentials private. Your admin key is kept
-          only in this browser tab and is never included in the published site.
+          Sign-in is verified securely by the WorkBee backend. Your password is
+          never stored in this browser or included in the published site.
         </p>
         <form onSubmit={submit}>
           <label>
@@ -298,24 +330,35 @@ function ConnectionDialog({
               type="url"
               placeholder="https://api.workbee.lk"
               required
-              value={draft.apiUrl}
-              onChange={(event) =>
-                setDraft({ ...draft, apiUrl: event.target.value })
-              }
+              value={apiUrl}
+              onChange={(event) => setApiUrl(event.target.value)}
             />
           </label>
           <label>
-            Dashboard Admin Key
+            Username
             <input
-              type="password"
-              placeholder="Enter the server-side admin key"
+              autoComplete="username"
               required
-              value={draft.token}
-              onChange={(event) =>
-                setDraft({ ...draft, token: event.target.value })
-              }
+              value={username}
+              onChange={(event) => setUsername(event.target.value)}
             />
           </label>
+          <label>
+            Password
+            <input
+              autoComplete="current-password"
+              type="password"
+              required
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+            />
+          </label>
+          {error ? (
+            <p className="dialog__error" role="alert">
+              <CircleAlert size={15} />
+              {error}
+            </p>
+          ) : null}
           <div className="dialog__actions">
             {connection.token ? (
               <button
@@ -329,16 +372,26 @@ function ConnectionDialog({
               <span />
             )}
             <div>
+              {canClose ? (
+                <button
+                  className="button button--quiet"
+                  type="button"
+                  onClick={onClose}
+                >
+                  Cancel
+                </button>
+              ) : null}
               <button
-                className="button button--quiet"
-                type="button"
-                onClick={onClose}
+                className="button button--primary"
+                disabled={submitting}
+                type="submit"
               >
-                Cancel
-              </button>
-              <button className="button button--primary" type="submit">
-                <ShieldCheck size={17} />
-                Connect
+                {submitting ? (
+                  <LoaderCircle className="spin" size={17} />
+                ) : (
+                  <ShieldCheck size={17} />
+                )}
+                {submitting ? "Signing In" : "Sign In"}
               </button>
             </div>
           </div>
@@ -555,8 +608,8 @@ function ProfileDrawer({
 }
 
 export default function Home() {
-  const [data, setData] = useState<DashboardData>(demoDashboardData);
-  const [mode, setMode] = useState<DataMode>("demo");
+  const [data, setData] = useState<DashboardData>(emptyDashboardData);
+  const [mode, setMode] = useState<DataMode>("locked");
   const [message, setMessage] = useState("");
   const [connection, setConnection] = useState<Connection>({
     apiUrl: localConnection.apiUrl,
@@ -576,8 +629,7 @@ export default function Home() {
 
   const loadDashboard = useCallback(async (nextConnection: Connection) => {
     if (!nextConnection.apiUrl || !nextConnection.token) {
-      setData(demoDashboardData);
-      setMode("demo");
+      setMode("locked");
       setMessage("");
       return;
     }
@@ -625,10 +677,13 @@ export default function Home() {
       if (saved) {
         nextConnection = JSON.parse(saved) as Connection;
       }
-      if (!nextConnection.apiUrl || !nextConnection.token) return;
       queueMicrotask(() => {
         setConnection(nextConnection);
-        void loadDashboard(nextConnection);
+        if (nextConnection.apiUrl && nextConnection.token) {
+          void loadDashboard(nextConnection);
+        } else {
+          setConnectionOpen(true);
+        }
       });
     } catch {
       sessionStorage.removeItem("workbee-dashboard-connection");
@@ -674,21 +729,52 @@ export default function Home() {
   );
   const summary = data.summary;
 
-  const saveConnection = (nextConnection: Connection) => {
+  const signIn = async (credentials: SignInCredentials) => {
+    const response = await fetch(
+      `${credentials.apiUrl}/api/v1/admin/session`,
+      {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          accept: "application/json",
+        },
+        body: JSON.stringify({
+          username: credentials.username,
+          password: credentials.password,
+        }),
+      },
+    );
+    const body = (await response.json().catch(() => ({}))) as {
+      token?: string;
+      error?: string;
+    };
+    if (!response.ok || !body.token) {
+      throw new Error(body.error || "The dashboard could not sign you in.");
+    }
+    const nextConnection = {
+      apiUrl: credentials.apiUrl,
+      token: body.token,
+    };
     setConnection(nextConnection);
     sessionStorage.setItem(
       "workbee-dashboard-connection",
       JSON.stringify(nextConnection),
     );
     setConnectionOpen(false);
-    void loadDashboard(nextConnection);
+    await loadDashboard(nextConnection);
   };
 
   const disconnect = () => {
+    if (connection.apiUrl && connection.token) {
+      void fetch(`${connection.apiUrl}/api/v1/admin/session`, {
+        method: "DELETE",
+        headers: { authorization: `Bearer ${connection.token}` },
+      }).catch(() => undefined);
+    }
     sessionStorage.removeItem("workbee-dashboard-connection");
-    setConnection({ apiUrl: "", token: "" });
-    setConnectionOpen(false);
-    void loadDashboard({ apiUrl: "", token: "" });
+    setConnection({ apiUrl: connection.apiUrl, token: "" });
+    setMode("locked");
+    setConnectionOpen(true);
   };
 
   const jumpTo = (target: string) => {
@@ -935,7 +1021,7 @@ export default function Home() {
                   ? "Connecting"
                   : mode === "error"
                     ? "Connection Issue"
-                    : "Demo Data"}
+                    : "Sign In Required"}
             </button>
             <button
               className="icon-button"
@@ -996,14 +1082,6 @@ export default function Home() {
                 last loaded data.
               </span>
               <button onClick={() => setConnectionOpen(true)}>Review Connection</button>
-            </div>
-          ) : mode === "demo" ? (
-            <div className="notice">
-              <span>
-                <strong>Preview Mode.</strong> Connect the WorkBee API to replace
-                this realistic sample with live PostgreSQL data.
-              </span>
-              <button onClick={() => setConnectionOpen(true)}>Connect Now</button>
             </div>
           ) : null}
 
@@ -1445,8 +1523,9 @@ export default function Home() {
         <ConnectionDialog
           connection={connection}
           onClose={() => setConnectionOpen(false)}
-          onSave={saveConnection}
+          onSignIn={signIn}
           onDisconnect={disconnect}
+          canClose={Boolean(connection.token)}
         />
       ) : null}
 

@@ -1592,6 +1592,13 @@ footer {
   z-index: 50;
 }
 
+.dialog-backdrop--locked {
+  background:
+    radial-gradient(circle at 75% 20%, rgba(13, 91, 255, 0.28), transparent 34%),
+    radial-gradient(circle at 20% 85%, rgba(255, 213, 74, 0.12), transparent 28%),
+    var(--blue-dark);
+}
+
 .dialog {
   background: #fff;
   border: 1px solid rgba(255, 255, 255, 0.5);
@@ -1672,6 +1679,20 @@ footer {
 
 .dialog input::placeholder {
   color: #a3a9b6;
+}
+
+.dialog__error {
+  align-items: center;
+  background: #fff1f3;
+  border: 1px solid #ffd7dc;
+  border-radius: 9px;
+  color: #a82d3b;
+  display: flex;
+  font-size: 10.5px;
+  gap: 7px;
+  line-height: 1.4;
+  margin: 13px 0 0;
+  padding: 10px 11px;
 }
 
 .dialog__actions {

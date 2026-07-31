@@ -30,24 +30,25 @@ With the WorkBee backend using port `3000`, run the dashboard on port `3001`:
 npm run dev -- -p 3001
 ```
 
-Open `http://localhost:3001`. The dashboard starts with representative demo
-data unless a connection is configured. Select **Connect live data** and enter:
+Open `http://localhost:3001`. The dashboard remains locked until a backend
+connection is configured and the administrator signs in. Enter:
 
 - the public HTTPS URL of the WorkBee backend
-- the value configured as `DASHBOARD_ADMIN_TOKEN` on that backend
+- the dashboard username and password configured only on that backend
 
-The key is stored in `sessionStorage`, so it is cleared when the browser session
-ends and is not compiled into the GitHub Pages bundle.
+The backend returns an expiring session token. Only that token is kept in
+`sessionStorage`, so it is cleared when the browser session ends. The username
+and password are not stored or compiled into the GitHub Pages bundle.
 
-For local-only automatic connection, create `.env.local`:
+To prefill the backend address locally, create `.env.local`:
 
 ```dotenv
 NEXT_PUBLIC_WORKBEE_API_URL=http://localhost:3000
-NEXT_PUBLIC_WORKBEE_DASHBOARD_TOKEN=your-local-admin-token
 ```
 
-Do not use `NEXT_PUBLIC_WORKBEE_DASHBOARD_TOKEN` in a public build because
-`NEXT_PUBLIC_` values are compiled into browser code.
+Configure `DASHBOARD_ADMIN_USERNAME` and
+`DASHBOARD_ADMIN_PASSWORD_HASH` only in the backend environment. Never add
+credentials, password hashes, or admin tokens to this repository.
 
 ## Validation
 
@@ -60,3 +61,7 @@ npm test
 The workflow in `.github/workflows/deploy-pages.yml` builds and publishes the
 static export whenever `main` is updated. In the repository settings, set
 **Pages → Build and deployment → Source** to **GitHub Actions**.
+
+Set the repository variable `WORKBEE_API_URL` to the public HTTPS address of the
+deployed backend. Repository variables are compiled into the site, so this value
+must be a public URL and must never contain credentials.
