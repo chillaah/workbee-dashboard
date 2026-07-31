@@ -69,7 +69,7 @@ const localConnection: Connection = {
 const navigation = [
   { label: "Overview", icon: LayoutDashboard, target: "overview" },
   { label: "People", icon: Users, target: "people" },
-  { label: "Job demand", icon: BriefcaseBusiness, target: "job-demand" },
+  { label: "Job Demand", icon: BriefcaseBusiness, target: "job-demand" },
   { label: "Locations", icon: Globe2, target: "locations" },
   { label: "Documents", icon: FileCheck2, target: "documents" },
   { label: "Vault", icon: WalletCards, target: "vault" },
@@ -175,9 +175,9 @@ function documentTypeLabel(value: string) {
 
 function greetingForTime(value: Date) {
   const hour = value.getHours();
-  if (hour < 12) return "Good morning";
-  if (hour < 17) return "Good afternoon";
-  return "Good evening";
+  if (hour < 12) return "Good Morning";
+  if (hour < 17) return "Good Afternoon";
+  return "Good Evening";
 }
 
 function languageLabel(value: string) {
@@ -239,7 +239,7 @@ function EmptyState() {
   return (
     <div className="empty-state">
       <Search size={22} />
-      <strong>No matching people</strong>
+      <strong>No Matching People</strong>
       <span>Try a different name, phone number, role, or location.</span>
     </div>
   );
@@ -280,8 +280,8 @@ function ConnectionDialog({
             <Database size={22} />
           </div>
           <div>
-            <span>Live data</span>
-            <h2 id="connection-title">Connect the Workbee API</h2>
+            <span>Live Data</span>
+            <h2 id="connection-title">Connect the WorkBee API</h2>
           </div>
           <button className="icon-button" onClick={onClose} aria-label="Close">
             <X size={18} />
@@ -293,7 +293,7 @@ function ConnectionDialog({
         </p>
         <form onSubmit={submit}>
           <label>
-            API base URL
+            API Base URL
             <input
               type="url"
               placeholder="https://api.workbee.lk"
@@ -305,7 +305,7 @@ function ConnectionDialog({
             />
           </label>
           <label>
-            Dashboard admin key
+            Dashboard Admin Key
             <input
               type="password"
               placeholder="Enter the server-side admin key"
@@ -373,7 +373,7 @@ function ProfileDrawer({
         onMouseDown={(event) => event.stopPropagation()}
       >
         <div className="profile-drawer__top">
-          <span>User record</span>
+          <span>User Record</span>
           <button className="icon-button" onClick={onClose} aria-label="Close profile">
             <X size={18} />
           </button>
@@ -382,13 +382,13 @@ function ProfileDrawer({
         {loading ? (
           <div className="profile-state">
             <LoaderCircle className="spin" size={28} />
-            <strong>Loading profile</strong>
-            <span>Retrieving details and files from Workbee.</span>
+            <strong>Loading Profile</strong>
+            <span>Retrieving details and files from WorkBee.</span>
           </div>
         ) : error ? (
           <div className="profile-state profile-state--error">
             <CircleAlert size={28} />
-            <strong>Could not open this profile</strong>
+            <strong>Could Not Open This Profile</strong>
             <span>{error}</span>
           </div>
         ) : user ? (
@@ -432,20 +432,20 @@ function ProfileDrawer({
                 <div className="profile-section__heading">
                   <CircleUserRound size={17} />
                   <div>
-                    <h3>Employee details</h3>
-                    <p>Personal and location information</p>
+                    <h3>Employee Details</h3>
+                    <p>Personal and Location Information</p>
                   </div>
                 </div>
                 <dl className="detail-grid">
-                  <div><dt>Full name</dt><dd>{[user.employeeProfile.firstName, user.employeeProfile.surname].filter(Boolean).join(" ")}</dd></div>
-                  <div><dt>Date of birth</dt><dd>{formatDate(user.employeeProfile.dateOfBirth)}</dd></div>
+                  <div><dt>Full Name</dt><dd>{[user.employeeProfile.firstName, user.employeeProfile.surname].filter(Boolean).join(" ")}</dd></div>
+                  <div><dt>Date of Birth</dt><dd>{formatDate(user.employeeProfile.dateOfBirth)}</dd></div>
                   <div><dt>Gender</dt><dd>{humanizeKey(user.employeeProfile.gender || "Not provided")}</dd></div>
-                  <div><dt>Contact number</dt><dd>{user.employeeProfile.contactNumber}</dd></div>
+                  <div><dt>Contact Number</dt><dd>{user.employeeProfile.contactNumber}</dd></div>
                   <div><dt>Province</dt><dd>{user.employeeProfile.province || "Not provided"}</dd></div>
-                  <div><dt>City / town</dt><dd>{[user.employeeProfile.city, user.employeeProfile.town].filter(Boolean).join(", ")}</dd></div>
+                  <div><dt>City / Town</dt><dd>{[user.employeeProfile.city, user.employeeProfile.town].filter(Boolean).join(", ")}</dd></div>
                   <div className="detail-grid__wide"><dt>Division</dt><dd>{user.employeeProfile.division}</dd></div>
-                  <div className="detail-grid__wide"><dt>Permanent address</dt><dd>{user.employeeProfile.permanentAddress}</dd></div>
-                  <div className="detail-grid__wide"><dt>Current address</dt><dd>{user.employeeProfile.currentAddress || "Same as permanent address"}</dd></div>
+                  <div className="detail-grid__wide"><dt>Permanent Address</dt><dd>{user.employeeProfile.permanentAddress}</dd></div>
+                  <div className="detail-grid__wide"><dt>Current Address</dt><dd>{user.employeeProfile.currentAddress || "Same as permanent address"}</dd></div>
                 </dl>
               </section>
             ) : null}
@@ -455,15 +455,15 @@ function ProfileDrawer({
                 <div className="profile-section__heading">
                   <BriefcaseBusiness size={17} />
                   <div>
-                    <h3>Employer details</h3>
-                    <p>Business and contact information</p>
+                    <h3>Employer Details</h3>
+                    <p>Business and Contact Information</p>
                   </div>
                 </div>
                 <dl className="detail-grid">
                   <div><dt>Business</dt><dd>{user.employerProfile.businessName}</dd></div>
-                  <div><dt>Contact person</dt><dd>{user.employerProfile.contactName}</dd></div>
-                  <div><dt>Contact number</dt><dd>{user.employerProfile.contactNumber}</dd></div>
-                  <div className="detail-grid__wide"><dt>Business address</dt><dd>{user.employerProfile.businessAddress}</dd></div>
+                  <div><dt>Contact Person</dt><dd>{user.employerProfile.contactName}</dd></div>
+                  <div><dt>Contact Number</dt><dd>{user.employerProfile.contactNumber}</dd></div>
+                  <div className="detail-grid__wide"><dt>Business Address</dt><dd>{user.employerProfile.businessAddress}</dd></div>
                 </dl>
               </section>
             ) : null}
@@ -472,8 +472,8 @@ function ProfileDrawer({
               <div className="profile-section__heading">
                 <BriefcaseBusiness size={17} />
                 <div>
-                  <h3>Job preferences</h3>
-                  <p>Categories and roles this person selected</p>
+                  <h3>Job Preferences</h3>
+                  <p>Categories and Roles This Person Selected</p>
                 </div>
               </div>
               {user.jobPreferences.length ? (
@@ -533,8 +533,8 @@ function ProfileDrawer({
                 <div className="profile-section__heading">
                   <Phone size={17} />
                   <div>
-                    <h3>Emergency contact</h3>
-                    <p>Use only when necessary</p>
+                    <h3>Emergency Contact</h3>
+                    <p>Use Only When Necessary</p>
                   </div>
                 </div>
                 <strong>{user.employeeProfile.emergencyName}</strong>
@@ -544,7 +544,7 @@ function ProfileDrawer({
             ) : null}
 
             <div className="profile-audit">
-              <span>Last login: {formatDate(user.lastLoginAt)}</span>
+              <span>Last Login: {formatDate(user.lastLoginAt)}</span>
               <span>Rating: ★ {user.rating.toFixed(1)}</span>
             </div>
           </div>
@@ -799,11 +799,11 @@ export default function Home() {
       "Role",
       "Location",
       "Language",
-      "Job preferences",
-      "Profile complete",
+      "Job Preferences",
+      "Profile Complete",
       "Documents",
       "Rating",
-      "Vault balance",
+      "Vault Balance",
       "Joined",
     ];
     const rows = filteredUsers.map((user) => [
@@ -849,7 +849,7 @@ export default function Home() {
             <span />
           </div>
           <div>
-            <strong>Workbee</strong>
+            <strong>WorkBee</strong>
             <span>Command Centre</span>
           </div>
           <button
@@ -888,7 +888,7 @@ export default function Home() {
         <div className="sidebar__bottom">
           <button className="nav-item" onClick={() => setConnectionOpen(true)}>
             <Settings2 size={18} />
-            <span>Data connection</span>
+            <span>Data Connection</span>
             <i className={`connection-dot connection-dot--${mode}`} />
           </button>
           <div className="admin-profile">
@@ -930,12 +930,12 @@ export default function Home() {
             >
               <span />
               {mode === "live"
-                ? "Live database"
+                ? "Live Database"
                 : mode === "loading"
                   ? "Connecting"
                   : mode === "error"
-                    ? "Connection issue"
-                    : "Demo data"}
+                    ? "Connection Issue"
+                    : "Demo Data"}
             </button>
             <button
               className="icon-button"
@@ -972,7 +972,7 @@ export default function Home() {
                   ? `${greetingForTime(currentTime)}, Chiran.`
                   : "Welcome, Chiran."}
               </h1>
-              <p>Here&apos;s what is happening across Workbee today.</p>
+              <p>Here&apos;s what is happening across WorkBee today.</p>
             </div>
             <div className="welcome__actions">
               <button className="button button--quiet" onClick={exportUsers}>
@@ -984,7 +984,7 @@ export default function Home() {
                 onClick={() => setConnectionOpen(true)}
               >
                 <Database size={17} />
-                {mode === "live" ? "Manage connection" : "Connect live data"}
+                {mode === "live" ? "Manage Connection" : "Connect Live Data"}
               </button>
             </div>
           </section>
@@ -992,50 +992,50 @@ export default function Home() {
           {mode === "error" ? (
             <div className="notice notice--error">
               <span>
-                <strong>Live data is unavailable.</strong> {message} Showing the
+                <strong>Live Data Is Unavailable.</strong> {message} Showing the
                 last loaded data.
               </span>
-              <button onClick={() => setConnectionOpen(true)}>Review connection</button>
+              <button onClick={() => setConnectionOpen(true)}>Review Connection</button>
             </div>
           ) : mode === "demo" ? (
             <div className="notice">
               <span>
-                <strong>Preview mode.</strong> Connect the Workbee API to replace
+                <strong>Preview Mode.</strong> Connect the WorkBee API to replace
                 this realistic sample with live PostgreSQL data.
               </span>
-              <button onClick={() => setConnectionOpen(true)}>Connect now</button>
+              <button onClick={() => setConnectionOpen(true)}>Connect Now</button>
             </div>
           ) : null}
 
           <section className="metric-grid" aria-label="Platform summary">
             <MetricCard
-              label="Total people"
+              label="Total People"
               value={fullNumber.format(summary.totalUsers)}
-              hint={`${fullNumber.format(summary.employees)} employees · ${fullNumber.format(summary.employers)} employers`}
-              change={`+${summary.newUsers30d} this month`}
+              hint={`${fullNumber.format(summary.employees)} Employees · ${fullNumber.format(summary.employers)} Employers`}
+              change={`+${summary.newUsers30d} This Month`}
               icon={Users}
               tone="blue"
             />
             <MetricCard
-              label="Profile completion"
+              label="Profile Completion"
               value={`${summary.profileCompletion.toFixed(1)}%`}
-              hint="Employee and employer profiles"
+              hint="Employee and Employer Profiles"
               change="+4.2%"
               icon={CircleUserRound}
               tone="violet"
             />
             <MetricCard
-              label="Document coverage"
+              label="Document Coverage"
               value={`${summary.documentCoverage.toFixed(1)}%`}
-              hint="Employees with core documents"
+              hint="Employees With Core Documents"
               change="+7.8%"
               icon={FileCheck2}
               tone="green"
             />
             <MetricCard
-              label="Vault balance"
+              label="Vault Balance"
               value={currency.format(summary.vaultBalance)}
-              hint="Total across all accounts"
+              hint="Total Across All Accounts"
               icon={WalletCards}
               tone="amber"
             />
@@ -1046,27 +1046,27 @@ export default function Home() {
               <div className="panel__header">
                 <div>
                   <span className="panel__kicker">Growth</span>
-                  <h2>New registrations</h2>
-                  <p>Accounts created and profiles completed.</p>
+                  <h2>New Registrations</h2>
+                  <p>Accounts Created and Profiles Completed.</p>
                 </div>
                 <div className="range-switch" aria-label="Chart range">
                   <button
                     className={range === "7d" ? "is-active" : ""}
                     onClick={() => setRange("7d")}
                   >
-                    7 days
+                    7 Days
                   </button>
                   <button
                     className={range === "30d" ? "is-active" : ""}
                     onClick={() => setRange("30d")}
                   >
-                    30 days
+                    30 Days
                   </button>
                 </div>
               </div>
               <div className="chart-legend">
                 <span><i className="legend-dot legend-dot--blue" />Registrations</span>
-                <span><i className="legend-dot legend-dot--violet" />Profiles completed</span>
+                <span><i className="legend-dot legend-dot--violet" />Profiles Completed</span>
               </div>
               <div className="trend-chart">
                 <ResponsiveContainer width="100%" height="100%">
@@ -1126,7 +1126,7 @@ export default function Home() {
                     />
                     <Area
                       dataKey="profiles"
-                      name="Profiles completed"
+                      name="Profiles Completed"
                       type="monotone"
                       stroke="#E0AD00"
                       strokeWidth={2.2}
@@ -1141,8 +1141,8 @@ export default function Home() {
               <div className="panel__header">
                 <div>
                   <span className="panel__kicker">Community</span>
-                  <h2>People mix</h2>
-                  <p>Active account roles.</p>
+                  <h2>People Mix</h2>
+                  <p>Active Account Roles.</p>
                 </div>
                 <Gauge size={19} className="panel__icon" />
               </div>
@@ -1171,7 +1171,7 @@ export default function Home() {
                   </ResponsiveContainer>
                   <div className="donut-chart__label">
                     <strong>{compactNumber.format(summary.totalUsers)}</strong>
-                    <span>people</span>
+                    <span>People</span>
                   </div>
                 </div>
                 <div className="donut-legend">
@@ -1202,8 +1202,8 @@ export default function Home() {
             <article className="panel" id="job-demand">
               <div className="panel__header">
                 <div>
-                  <span className="panel__kicker">Worker interests</span>
-                  <h2>Top job categories</h2>
+                  <span className="panel__kicker">Worker Interests</span>
+                  <h2>Top Job Categories</h2>
                 </div>
                 <BriefcaseBusiness size={19} className="panel__icon" />
               </div>
@@ -1233,7 +1233,7 @@ export default function Home() {
               <div className="panel__header">
                 <div>
                   <span className="panel__kicker">Coverage</span>
-                  <h2>People by province</h2>
+                  <h2>People by Province</h2>
                 </div>
                 <Globe2 size={19} className="panel__icon" />
               </div>
@@ -1268,7 +1268,7 @@ export default function Home() {
               <div className="panel__header">
                 <div>
                   <span className="panel__kicker">Readiness</span>
-                  <h2>Profile health</h2>
+                  <h2>Profile Health</h2>
                 </div>
                 <Activity size={19} className="panel__icon" />
               </div>
@@ -1277,19 +1277,19 @@ export default function Home() {
                   <strong>{summary.documentCoverage.toFixed(0)}</strong>
                   <span>/100</span>
                 </div>
-                <p>Platform readiness score</p>
+                <p>Platform Readiness Score</p>
               </div>
               <div className="health-items">
                 <div>
-                  <span><Check size={14} />Profiles complete</span>
+                  <span><Check size={14} />Profiles Complete</span>
                   <strong>{summary.profileCompletion.toFixed(1)}%</strong>
                 </div>
                 <div>
-                  <span><Check size={14} />Core documents</span>
+                  <span><Check size={14} />Core Documents</span>
                   <strong>{summary.documentCoverage.toFixed(1)}%</strong>
                 </div>
                 <div id="vault">
-                  <span><WalletCards size={14} />Vault funded</span>
+                  <span><WalletCards size={14} />Vault Funded</span>
                   <strong>{currency.format(summary.vaultBalance)}</strong>
                 </div>
               </div>
@@ -1300,7 +1300,7 @@ export default function Home() {
             <div className="people-panel__header">
               <div>
                 <span className="panel__kicker">Directory</span>
-                <h2>People directory</h2>
+                <h2>People Directory</h2>
                 <p>Select a person to inspect their profile and files.</p>
               </div>
               <div className="people-tools">
@@ -1308,7 +1308,7 @@ export default function Home() {
                   <Search size={16} />
                   <input
                     aria-label="Search people by name, ID, or job preference"
-                    placeholder="Name, ID or job preference"
+                    placeholder="Name, ID or Job Preference"
                     value={query}
                     onChange={(event) => setQuery(event.target.value)}
                   />
@@ -1324,7 +1324,7 @@ export default function Home() {
                     value={role}
                     onChange={(event) => setRole(event.target.value)}
                   >
-                    <option value="all">All roles</option>
+                    <option value="all">All Roles</option>
                     <option value="employee">Employees</option>
                     <option value="employer">Employers</option>
                     <option value="unassigned">Unassigned</option>
@@ -1345,7 +1345,7 @@ export default function Home() {
                     <tr>
                       <th>Person</th>
                       <th>Role</th>
-                      <th>Job preferences</th>
+                      <th>Job Preferences</th>
                       <th>Location</th>
                       <th>Profile</th>
                       <th>Files</th>
@@ -1387,7 +1387,7 @@ export default function Home() {
                               ) : null}
                             </div>
                           ) : (
-                            <span className="table-secondary">Not selected</span>
+                            <span className="table-secondary">Not Selected</span>
                           )}
                         </td>
                         <td>
@@ -1435,7 +1435,7 @@ export default function Home() {
           </section>
 
           <footer>
-            <span>Workbee Command Centre</span>
+            <span>WorkBee Command Centre</span>
             <span>Operational data is read-only.</span>
           </footer>
         </div>

@@ -1,7 +1,7 @@
-# Workbee Command Centre
+# WorkBee Command Centre
 
-A static Next.js operations dashboard for the Workbee platform, designed for
-GitHub Pages and inspired by the Quantroam dashboard architecture.
+A static Next.js operations dashboard for the WorkBee platform, designed for
+secure operational visibility and static deployment through GitHub Pages.
 
 ## What it shows
 
@@ -11,11 +11,11 @@ GitHub Pages and inspired by the Quantroam dashboard architecture.
 - role and language distribution
 - top worker job preferences and geographic coverage
 - a searchable, filterable, CSV-exportable people directory
-- user search by name, Workbee ID, or job preference
+- user search by name, WorkBee ID, or job preference
 - click-through employee and employer profiles with private file previews
 
 The published dashboard never connects directly to PostgreSQL. It reads from a
-protected Workbee API endpoint so database credentials remain server-side.
+protected WorkBee API endpoint so database credentials remain server-side.
 
 ## Local development
 
@@ -24,7 +24,7 @@ npm install
 npm run dev
 ```
 
-With the Workbee backend using port `3000`, run the dashboard on port `3001`:
+With the WorkBee backend using port `3000`, run the dashboard on port `3001`:
 
 ```bash
 npm run dev -- -p 3001
@@ -33,7 +33,7 @@ npm run dev -- -p 3001
 Open `http://localhost:3001`. The dashboard starts with representative demo
 data unless a connection is configured. Select **Connect live data** and enter:
 
-- the public HTTPS URL of the Workbee backend
+- the public HTTPS URL of the WorkBee backend
 - the value configured as `DASHBOARD_ADMIN_TOKEN` on that backend
 
 The key is stored in `sessionStorage`, so it is cleared when the browser session

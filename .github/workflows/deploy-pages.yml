@@ -1,4 +1,4 @@
-name: Deploy Workbee dashboard
+name: Deploy WorkBee Dashboard
 
 on:
   push:
