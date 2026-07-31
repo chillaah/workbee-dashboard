@@ -52,6 +52,11 @@ type Connection = {
 type DataMode = "demo" | "live" | "loading" | "error";
 type TimeRange = "7d" | "30d";
 
+const localConnection: Connection = {
+  apiUrl: process.env.NEXT_PUBLIC_WORKBEE_API_URL ?? "",
+  token: process.env.NEXT_PUBLIC_WORKBEE_DASHBOARD_TOKEN ?? "",
+};
+
 const navigation = [
   { label: "Overview", icon: LayoutDashboard, target: "overview" },
   { label: "People", icon: Users, target: "people" },
@@ -254,8 +259,8 @@ export default function Home() {
   const [mode, setMode] = useState<DataMode>("demo");
   const [message, setMessage] = useState("");
   const [connection, setConnection] = useState<Connection>({
-    apiUrl: "",
-    token: "",
+    apiUrl: localConnection.apiUrl,
+    token: localConnection.token,
   });
   const [connectionOpen, setConnectionOpen] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
@@ -302,9 +307,12 @@ export default function Home() {
 
   useEffect(() => {
     const saved = sessionStorage.getItem("workbee-dashboard-connection");
-    if (!saved) return;
+    let nextConnection = localConnection;
     try {
-      const nextConnection = JSON.parse(saved) as Connection;
+      if (saved) {
+        nextConnection = JSON.parse(saved) as Connection;
+      }
+      if (!nextConnection.apiUrl || !nextConnection.token) return;
       queueMicrotask(() => {
         setConnection(nextConnection);
         void loadDashboard(nextConnection);
@@ -454,9 +462,9 @@ export default function Home() {
             <i className={`connection-dot connection-dot--${mode}`} />
           </button>
           <div className="admin-profile">
-            <div className="avatar avatar--admin">CA</div>
+            <div className="avatar avatar--admin">CH</div>
             <div>
-              <strong>Chirath</strong>
+              <strong>Chiran</strong>
               <span>Administrator</span>
             </div>
             <ChevronDown size={16} />
@@ -511,7 +519,7 @@ export default function Home() {
               />
             </button>
             <button className="avatar avatar--button" aria-label="Open account menu">
-              CA
+              CH
             </button>
           </div>
         </header>
@@ -523,7 +531,7 @@ export default function Home() {
                 <Sparkles size={14} />
                 Friday, 31 July
               </span>
-              <h1>Good afternoon, Chirath.</h1>
+              <h1>Good afternoon, Chiran.</h1>
               <p>Here&apos;s what is happening across Workbee today.</p>
             </div>
             <div className="welcome__actions">
