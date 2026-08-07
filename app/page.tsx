@@ -1564,7 +1564,6 @@ export default function Home() {
                     <option value="all">All Roles</option>
                     <option value="employee">Employees</option>
                     <option value="employer">Employers</option>
-                    <option value="unassigned">Unassigned</option>
                   </select>
                   <ChevronDown size={14} />
                 </label>

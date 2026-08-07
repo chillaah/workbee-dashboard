@@ -31,7 +31,7 @@ export type RecentUser = {
   publicId: string | null;
   name: string;
   phoneNumber: string;
-  role: "employee" | "employer" | "unassigned";
+  role: "employee" | "employer";
   location: string;
   language: string;
   joinedAt: string;
@@ -88,7 +88,7 @@ export type UserDetail = {
   name: string;
   phoneNumber: string;
   language: string;
-  role: "employee" | "employer" | "unassigned";
+  role: "employee" | "employer";
   rating: number;
   vaultBalance: number;
   approved: boolean;
