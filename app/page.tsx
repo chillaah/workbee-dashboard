@@ -75,7 +75,7 @@ const localConnection: Connection = {
 const navigation = [
   { label: "Overview", icon: LayoutDashboard, target: "overview" },
   { label: "People", icon: Users, target: "people" },
-  { label: "Job Demand", icon: BriefcaseBusiness, target: "job-demand" },
+  { label: "Jobs & Bids", icon: BriefcaseBusiness, target: "jobs-report" },
   { label: "Locations", icon: Globe2, target: "locations" },
   { label: "Documents", icon: FileCheck2, target: "documents" },
   { label: "Vault", icon: WalletCards, target: "vault" },
@@ -175,6 +175,30 @@ function humanizeKey(value: string) {
       return normalized.charAt(0).toUpperCase() + normalized.slice(1);
     })
     .join(" ");
+}
+
+function jobStatusLabel(value: string) {
+  const labels: Record<string, string> = {
+    published: "Published",
+    not_started: "Not Started",
+    start_confirmed: "Start Confirmed",
+    in_progress: "In Progress",
+    completed_requested: "Completion Requested",
+    completion_confirmed: "Completion Confirmed",
+  };
+  return labels[value] ?? humanizeKey(value);
+}
+
+function jobBudgetLabel(
+  estimatedPricePerWorker: number,
+  biddingEnabled: boolean,
+  minimumBid: number | null,
+  maximumBid: number | null,
+) {
+  if (biddingEnabled && minimumBid !== null && maximumBid !== null) {
+    return `${currency.format(minimumBid)} – ${currency.format(maximumBid)}`;
+  }
+  return currency.format(estimatedPricePerWorker);
 }
 
 function documentTypeLabel(value: string) {
@@ -1532,6 +1556,92 @@ export default function Home() {
                 </div>
               </div>
             </article>
+          </section>
+
+          <section
+            className="panel jobs-panel"
+            id="jobs-report"
+            aria-labelledby="jobs-report-title"
+          >
+            <div className="people-panel__header">
+              <div>
+                <span className="panel__kicker">Admin Portal Report</span>
+                <h2 id="jobs-report-title">Published Jobs and Lifecycle</h2>
+                <p>
+                  Real job posts with employer IDs, budgets, bid ranges, bookings,
+                  and current workflow status.
+                </p>
+              </div>
+              <BriefcaseBusiness size={20} className="panel__icon" />
+            </div>
+            {data.recentJobs.length === 0 ? (
+              <div className="jobs-empty">
+                <BriefcaseBusiness size={22} />
+                <strong>No jobs have been published yet</strong>
+                <span>New employer posts will appear here automatically.</span>
+              </div>
+            ) : (
+              <div className="table-scroll">
+                <table className="jobs-table">
+                  <thead>
+                    <tr>
+                      <th>Job</th>
+                      <th>Status</th>
+                      <th>Employer</th>
+                      <th>Budget / Bid Range</th>
+                      <th>Workers</th>
+                      <th>Bids</th>
+                      <th>Schedule</th>
+                      <th>Location</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {data.recentJobs.map((job) => (
+                      <tr key={job.id}>
+                        <td>
+                          <strong className="table-primary">{job.title}</strong>
+                          <span className="table-secondary">
+                            {humanizeKey(job.categoryKey)} · {humanizeKey(job.subcategoryKey)}
+                          </span>
+                        </td>
+                        <td>
+                          <span className={`job-status job-status--${job.status}`}>
+                            {jobStatusLabel(job.status)}
+                          </span>
+                        </td>
+                        <td>
+                          <strong className="public-id">{job.employerPublicId}</strong>
+                        </td>
+                        <td>
+                          <strong className="table-primary">
+                            {jobBudgetLabel(
+                              job.estimatedPricePerWorker,
+                              job.biddingEnabled,
+                              job.minimumBid,
+                              job.maximumBid,
+                            )}
+                          </strong>
+                          <span className="table-secondary">
+                            {currency.format(job.estimatedPricePerWorker)} estimated per worker
+                          </span>
+                        </td>
+                        <td>
+                          {job.assignedWorkerCount} / {job.workersRequired}
+                        </td>
+                        <td>{job.bidCount}</td>
+                        <td>
+                          <strong className="table-primary">{formatDate(job.jobDate)}</strong>
+                          <span className="table-secondary">
+                            {job.startTime.slice(0, 5)}–{job.endTime.slice(0, 5)}
+                          </span>
+                        </td>
+                        <td>{job.location}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </section>
 
           <section className="panel people-panel">
