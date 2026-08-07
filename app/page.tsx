@@ -465,7 +465,7 @@ function ProfileDrawer({
                   {titleCase(user.role)}
                 </span>
                 <h2>{user.name}</h2>
-                <p><IdCard size={13} />{user.id}</p>
+                <p><IdCard size={13} />{user.publicId ?? "ID pending"}</p>
               </div>
             </section>
 
@@ -773,6 +773,7 @@ export default function Home() {
         !needle ||
         [
           user.name,
+          user.publicId,
           user.phoneNumber,
           user.location,
           user.language,
@@ -867,6 +868,7 @@ export default function Home() {
     if (mode !== "live") {
       setSelectedUser({
         id: user.id,
+        publicId: user.publicId,
         name: user.name,
         phoneNumber: user.phoneNumber,
         language: user.language,
@@ -1019,6 +1021,7 @@ export default function Home() {
   const exportUsers = () => {
     const header = [
       "Name",
+      "WorkBee ID",
       "Phone",
       "Role",
       "Location",
@@ -1033,6 +1036,7 @@ export default function Home() {
     ];
     const rows = filteredUsers.map((user) => [
       user.name,
+      user.publicId ?? "",
       user.phoneNumber,
       user.role,
       user.location,
@@ -1561,7 +1565,6 @@ export default function Home() {
                     <option value="all">All Roles</option>
                     <option value="employee">Employees</option>
                     <option value="employer">Employers</option>
-                    <option value="unassigned">Unassigned</option>
                   </select>
                   <ChevronDown size={14} />
                 </label>
@@ -1599,7 +1602,7 @@ export default function Home() {
                             <span className="avatar">{initials(user.name)}</span>
                             <div>
                               <strong>{user.name}</strong>
-                              <span>{user.id}</span>
+                              <span>{user.publicId ?? "ID pending"}</span>
                             </div>
                             <ExternalLink size={14} />
                           </button>

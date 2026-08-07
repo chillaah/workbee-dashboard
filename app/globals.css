@@ -1138,11 +1138,6 @@ tbody tr:hover {
   color: #6d4bd3;
 }
 
-.role-badge--unassigned {
-  background: #f1f2f5;
-  color: #6c7280;
-}
-
 .status {
   gap: 5px;
 }
@@ -1363,8 +1358,7 @@ footer {
 }
 
 .profile-identity .role-badge--employee,
-.profile-identity .role-badge--employer,
-.profile-identity .role-badge--unassigned {
+.profile-identity .role-badge--employer {
   background: rgba(255, 213, 74, 0.14);
   color: var(--amber);
 }

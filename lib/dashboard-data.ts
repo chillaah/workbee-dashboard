@@ -28,9 +28,10 @@ export type JobPreference = {
 
 export type RecentUser = {
   id: string;
+  publicId: string | null;
   name: string;
   phoneNumber: string;
-  role: "employee" | "employer" | "unassigned";
+  role: "employee" | "employer";
   location: string;
   language: string;
   joinedAt: string;
@@ -83,10 +84,11 @@ export type EmployerProfile = {
 
 export type UserDetail = {
   id: string;
+  publicId: string | null;
   name: string;
   phoneNumber: string;
   language: string;
-  role: "employee" | "employer" | "unassigned";
+  role: "employee" | "employer";
   rating: number;
   vaultBalance: number;
   approved: boolean;
