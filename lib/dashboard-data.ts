@@ -28,6 +28,7 @@ export type JobPreference = {
 
 export type RecentUser = {
   id: string;
+  publicId: string | null;
   name: string;
   phoneNumber: string;
   role: "employee" | "employer" | "unassigned";
@@ -83,6 +84,7 @@ export type EmployerProfile = {
 
 export type UserDetail = {
   id: string;
+  publicId: string | null;
   name: string;
   phoneNumber: string;
   language: string;

@@ -465,7 +465,7 @@ function ProfileDrawer({
                   {titleCase(user.role)}
                 </span>
                 <h2>{user.name}</h2>
-                <p><IdCard size={13} />{user.id}</p>
+                <p><IdCard size={13} />{user.publicId ?? user.id}</p>
               </div>
             </section>
 
@@ -773,6 +773,7 @@ export default function Home() {
         !needle ||
         [
           user.name,
+          user.publicId,
           user.phoneNumber,
           user.location,
           user.language,
@@ -1019,6 +1020,7 @@ export default function Home() {
   const exportUsers = () => {
     const header = [
       "Name",
+      "WorkBee ID",
       "Phone",
       "Role",
       "Location",
@@ -1033,6 +1035,7 @@ export default function Home() {
     ];
     const rows = filteredUsers.map((user) => [
       user.name,
+      user.publicId ?? "",
       user.phoneNumber,
       user.role,
       user.location,
