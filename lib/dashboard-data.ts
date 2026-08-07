@@ -43,6 +43,27 @@ export type RecentUser = {
   jobPreferences: JobPreference[];
 };
 
+export type RecentJob = {
+  id: string;
+  title: string;
+  status: string;
+  employerPublicId: string;
+  categoryKey: string;
+  subcategoryKey: string;
+  location: string;
+  jobDate: string;
+  startTime: string;
+  endTime: string;
+  workersRequired: number;
+  estimatedPricePerWorker: number;
+  biddingEnabled: boolean;
+  minimumBid: number | null;
+  maximumBid: number | null;
+  bidCount: number;
+  assignedWorkerCount: number;
+  createdAt: string;
+};
+
 export type UserDocument = {
   id: string;
   type: string;
@@ -113,6 +134,7 @@ export type DashboardData = {
   jobCategories: Breakdown[];
   locations: Breakdown[];
   recentUsers: RecentUser[];
+  recentJobs: RecentJob[];
 };
 
 export const emptyDashboardData: DashboardData = {
@@ -132,4 +154,5 @@ export const emptyDashboardData: DashboardData = {
   jobCategories: [],
   locations: [],
   recentUsers: [],
+  recentJobs: [],
 };
