@@ -465,7 +465,7 @@ function ProfileDrawer({
                   {titleCase(user.role)}
                 </span>
                 <h2>{user.name}</h2>
-                <p><IdCard size={13} />{user.publicId ?? user.id}</p>
+                <p><IdCard size={13} />{user.publicId ?? "ID pending"}</p>
               </div>
             </section>
 
@@ -868,6 +868,7 @@ export default function Home() {
     if (mode !== "live") {
       setSelectedUser({
         id: user.id,
+        publicId: user.publicId,
         name: user.name,
         phoneNumber: user.phoneNumber,
         language: user.language,
@@ -1601,7 +1602,7 @@ export default function Home() {
                             <span className="avatar">{initials(user.name)}</span>
                             <div>
                               <strong>{user.name}</strong>
-                              <span>{user.id}</span>
+                              <span>{user.publicId ?? "ID pending"}</span>
                             </div>
                             <ExternalLink size={14} />
                           </button>
